@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Login to your OMOKA LOANS account to access fast loans up to Ksh 100,000">
+    <title>Login - Pesa Pap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #F5F9FF 0%, #E3F2FD 100%);
+            color: #2d3748;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(30, 136, 229, 0.3);
+        }
+
+        .login-container {
+            flex: 1;
+            max-width: 450px;
+            margin: 0 auto 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(30, 136, 229, 0.1);
+            border: 1px solid rgba(30, 136, 229, 0.2);
+            position: relative;
+        }
+
+        .login-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(30, 136, 229, 0.05);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .brand-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-tagline {
+            font-weight: 300;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            color: #0D47A1;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1E88E5;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+            background-color: #fff;
+        }
+
+        .form-group input::placeholder {
+            color: #a0aec0;
+            opacity: 0.8;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin: -0.5rem 0 1.5rem;
+        }
+
+        .forgot-password a {
+            color: #1E88E5;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(30, 136, 229, 0.5);
+        }
+
+        .no-account {
+            text-align: center;
+            color: #4a5568;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .no-account button {
+            background: none;
+            border: none;
+            color: #1E88E5;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: inherit;
+            padding: 0;
+            transition: color 0.2s;
+        }
+
+        .no-account button:hover {
+            text-decoration: underline;
+        }
+
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 1.5rem 0;
+            font-size: 0.7rem;
+            color: #0D47A1;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-icon {
+            font-size: 1.2rem;
+        }
+
+        .footer {
+            background: #0D47A1;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* ===== Functional Styles ===== */
+        .loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            margin: -25px 0 0 -25px;
+            border: 5px solid rgba(66, 153, 225, 0.2);
+            border-top: 5px solid #1E88E5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 9999;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #0D47A1;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 1.5rem;
+                padding: 1.8rem;
+            }
+            
+            .brand-logo {
+                font-size: 1.8rem;
+            }
+            
+            .login-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="brand-logo">Pesa Pap</div>
+        <div class="brand-tagline">Fast & Reliable Financing Solutions</div>
+    </div>
+
+    <div class="login-container">
+        <h2 class="login-title">Welcome Back</h2>
+
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required />
+            </div>
+
+            <div class="forgot-password">
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">LOGIN</button>
+
+            <div class="no-account">
+                No account yet? <button type="button" id="create">Create now</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="loader" class="loader" style="display: none;"></div>
+    <div id="toast" class="toast"></div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/contact">Contact Us</a>
+        </div>
+        <p>&copy; 2025 Pesa Pap. Licensed by CBK.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"; 
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"; 
+        
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCjnv5_IGHQVa5tXUBmH6FDYxBUvSREVsQ",
+            authDomain: "okoa-mkopo-straight-to-m-pesa.firebaseapp.com", 
+            projectId: "okoa-mkopo-straight-to-m-pesa", 
+            storageBucket: "okoa-mkopo-straight-to-m-pesa.appspot.com", 
+            messagingSenderId: "398221059857", 
+            appId: "1:398221059857:web:92874816cd6a8365008eb0"
+        }; 
+        
+        const app = initializeApp(firebaseConfig); 
+        const db = getDatabase(app); 
+        const loader = document.getElementById("loader");
+        const toast = document.getElementById("toast"); 
+        const loginBtn = document.getElementById("loginBtn");
+        
+        function showToast(message) { 
+            toast.textContent = message; 
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000); 
+        } 
+        
+        document.getElementById("loginForm").addEventListener("submit", async (e) => { 
+            e.preventDefault(); 
+            const phone = document.getElementById("phone").value.trim(); 
+            const password = document.getElementById("password").value.trim();
+            loader.style.display = "block";
+            loginBtn.disabled = true;
+            loginBtn.textContent = "Processing...";
+            
+            try { 
+                const userRef = ref(db, "users/" + phone); 
+                const snapshot = await get(userRef); 
+                
+                if (snapshot.exists()) { 
+                    const userData = snapshot.val(); 
+                    
+                    if (userData.password === password) { 
+                        if (userData.yere === "67") { 
+                            sessionStorage.setItem("mpesaNumber", phone); 
+                            window.location.href = "dash.html"; 
+                        } else if (userData.yere === "null") { 
+                            sessionStorage.setItem("mpesaNumber", phone); 
+                            window.location.href = "dashboard.html"; 
+                        } else { 
+                            showToast("❌ Please create an account to continue"); 
+                        } 
+                    } else { 
+                        showToast("❌ Incorrect password. Please try again."); 
+                    }
+                } else { 
+                    showToast("❌ Account not found. Please register."); 
+                } 
+            } catch (error) { 
+                console.error("Login error:", error); 
+                showToast("❌ Login failed. Please try again later."); 
+            } finally { 
+                loader.style.display = "none";
+                loginBtn.disabled = false;
+                loginBtn.textContent = "LOGIN";
+            } 
+        }); 
+        
+        document.getElementById("create").addEventListener("click", () => { 
+            loader.style.display = "block"; 
+            setTimeout(() => { 
+                window.location.href = "register.html"; 
+            }, 500); 
+        });
+    </script>
+</body>
+</html>

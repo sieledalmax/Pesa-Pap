@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Secure loan eligibility processing with OMOKA LOANS">
+    <link rel="icon" type="image/png" href="IMG-20250323-WA0008.png" />
+    <title>Processing Eligibility | Pesa Pap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #F5F9FF 0%, #E3F2FD 100%);
+            color: #2d3748;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(30, 136, 229, 0.3);
+        }
+
+        .brand-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-tagline {
+            font-weight: 300;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .processing-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(30, 136, 229, 0.1);
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(30, 136, 229, 0.2);
+        }
+
+        .processing-title {
+            font-size: 1.8rem;
+            color: #0D47A1;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .processing-animation {
+            width: 80px;
+            height: 80px;
+            margin: 2rem auto;
+            border: 5px solid #E3F2FD;
+            border-top: 5px solid #1E88E5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            font-size: 1.1rem;
+            margin: 1.5rem 0;
+            color: #4a5568;
+            min-height: 1.5rem;
+            font-weight: 500;
+        }
+
+        .trust-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 2rem 0;
+        }
+
+        .badge {
+            background: #E3F2FD;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #0D47A1;
+            display: flex;
+            align-items: center;
+        }
+
+        .badge-icon {
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            background: #0D47A1;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .processing-container {
+                margin: 1.5rem;
+                padding: 1.8rem;
+            }
+            
+            .processing-title {
+                font-size: 1.5rem;
+            }
+            
+            .trust-badges {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="brand-logo">Pesa Pap</div>
+        <div class="brand-tagline">Fast & Reliable Financing Solutions</div>
+    </div>
+
+    <div class="processing-container">
+        <h1 class="processing-title">Processing Your Application</h1>
+        
+        <div class="processing-animation"></div>
+        
+        <div class="status-message" id="statusMessage">Starting verification process...</div>
+        
+        <div class="trust-badges">
+            <div class="badge">
+                <span class="badge-icon">🔒</span> Secure
+            </div>
+            <div class="badge">
+                <span class="badge-icon">🏦</span> CBK Licensed
+            </div>
+            <div class="badge">
+                <span class="badge-icon">⚡</span> Fast Approval
+            </div>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+            <p>Congratulations! Your application is being finalized.</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/contact">Contact Us</a>
+        </div>
+        <p>&copy; 2025 Pesa Pap. Licensed by CBK.</p>
+    </footer>
+
+    <script>
+        // Simpler status updates
+        const messages = [
+            "Starting verification process...",
+            "Checking your details...",
+            "Reviewing eligibility...",
+            "Finalizing your offer..."
+        ];
+        
+        let currentMessage = 0;
+        const statusElement = document.getElementById('statusMessage');
+        
+        // Change message every 3 seconds
+        const messageInterval = setInterval(() => {
+            currentMessage = (currentMessage + 1) % messages.length;
+            statusElement.textContent = messages[currentMessage];
+        }, 3000);
+        
+        // Complete after 12 seconds
+        setTimeout(() => {
+            clearInterval(messageInterval);
+            document.getElementById('statusMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = "home.html";
+            }, 2000);
+        }, 12000);
+    </script>
+</body>
+</html>

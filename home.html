@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Selection | Pesa Pap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Base Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #F5F9FF 0%, #E3F2FD 100%);
+            color: #2d3748;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(30, 136, 229, 0.3);
+        }
+
+        .brand-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-tagline {
+            font-weight: 300;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .selection-container {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(30, 136, 229, 0.1);
+            border: 1px solid rgba(30, 136, 229, 0.2);
+            position: relative;
+        }
+
+        .selection-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(30, 136, 229, 0.05);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .page-title {
+            color: #0D47A1;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .offer-card {
+            background: #E3F2FD;
+            border-left: 4px solid #1E88E5;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .offer-card p {
+            font-size: 1.1rem;
+            color: #0D47A1;
+            font-weight: 500;
+        }
+
+        .offer-card strong {
+            font-weight: 700;
+            color: #0D47A1;
+        }
+
+        .loan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .loan-option {
+            padding: 1.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .loan-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(30, 136, 229, 0.1);
+            border-color: #1E88E5;
+        }
+
+        .loan-option.active {
+            border-color: #1E88E5;
+            background: #F5F9FF;
+            position: relative;
+        }
+
+        .loan-option.active::after {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background: #1E88E5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .loan-amount {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1E88E5;
+            margin-bottom: 0.5rem;
+        }
+
+        .loan-limit {
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+
+        .warning-badge {
+            display: none;
+            background: #FFF5F5;
+            color: #E53E3E;
+            padding: 0.5rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .info-box {
+            background: #FFF9E6;
+            border-left: 4px solid #F6AD55;
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .info-icon {
+            color: #DD6B20;
+            font-size: 1.3rem;
+            margin-top: 0.2rem;
+        }
+
+        .info-text {
+            font-size: 0.95rem;
+            color: #4A5568;
+        }
+
+        .action-section {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .continue-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
+        }
+
+        .continue-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(30, 136, 229, 0.5);
+        }
+
+        .continue-btn:disabled {
+            background: #CBD5E0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        .spinner {
+            display: none;
+            margin-left: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: #0D47A1;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #0D47A1;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .selection-container {
+                margin: 1.5rem;
+                padding: 1.8rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .loan-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="brand-logo">Pesa Pap</div>
+        <div class="brand-tagline">Fast & Reliable Financing Solutions</div>
+    </div>
+
+    <div class="selection-container">
+        <h1 class="page-title">Select Your Loan Package</h1>
+        <p class="page-subtitle">Choose your preferred savings amount to determine your loan limit</p>
+
+        <div class="offer-card">
+            <p>Dear customer, you qualify for a loan of up to <strong>Ksh 30,500</strong> based on your profile.</p>
+        </div>
+
+        <div class="loan-grid">
+            <div class="loan-option" data-amount="150" data-limit="2560">
+                <div class="loan-amount">Ksh 150</div>
+                <div class="loan-limit">Loan: Ksh 2,560</div>
+            </div>
+            <div class="loan-option" data-amount="190" data-limit="4230">
+                <div class="loan-amount">Ksh 190</div>
+                <div class="loan-limit">Loan: Ksh 4,230</div>
+            </div>
+            <div class="loan-option" data-amount="250" data-limit="6760">
+                <div class="loan-amount">Ksh 250</div>
+                <div class="loan-limit">Loan: Ksh 6,760</div>
+            </div>
+            <div class="loan-option" data-amount="320" data-limit="9030">
+                <div class="loan-amount">Ksh 320</div>
+                <div class="loan-limit">Loan: Ksh 9,030</div>
+            </div>
+            <div class="loan-option" data-amount="460" data-limit="10660">
+                <div class="loan-amount">Ksh 460</div>
+                <div class="loan-limit">Loan: Ksh 10,660</div>
+            </div>
+            <div class="loan-option" data-amount="960" data-limit="20500">
+                <div class="loan-amount">Ksh 960</div>
+                <div class="loan-limit">Loan: Ksh 20,500</div>
+            </div>
+            <div class="loan-option" data-amount="1260" data-limit="25500">
+                <div class="loan-amount">Ksh 1,260</div>
+                <div class="loan-limit">Loan: Ksh 25,500</div>
+            </div>
+            <div class="loan-option" data-amount="1550" data-limit="30500">
+                <div class="loan-amount">Ksh 1,550</div>
+                <div class="loan-limit">Loan: Ksh 30,500</div>
+            </div>
+            <div class="loan-option" data-amount="2050" data-limit="34500">
+                <div class="loan-amount">Ksh 2,050</div>
+                <div class="loan-limit">Loan: Ksh 34,500</div>
+                <div class="warning-badge">Existing members only</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-text">Higher savings amounts qualify you for larger loans. Your selected savings amount will be automatically deducted from your loan disbursement.</div>
+        </div>
+
+        <div class="action-section">
+            <button class="continue-btn" id="continueBtn" disabled>
+                <span class="btn-text">Continue Application</span>
+                <span class="spinner">⏳</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/contact">Contact Us</a>
+        </div>
+        <p>&copy; 2025 Pesa Pap. Licensed by CBK.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loanOptions = document.querySelectorAll('.loan-option');
+            const continueBtn = document.getElementById('continueBtn');
+            const btnText = continueBtn.querySelector('.btn-text');
+            const spinner = continueBtn.querySelector('.spinner');
+            const toast = document.getElementById('toast');
+            
+            let selectedOption = null;
+
+            // Add click event to each loan option
+            loanOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    loanOptions.forEach(opt => {
+                        opt.classList.remove('active');
+                        const warningBadge = opt.querySelector('.warning-badge');
+                        if (warningBadge) warningBadge.style.display = 'none';
+                    });
+
+                    // Add active class to clicked option
+                    this.classList.add('active');
+                    selectedOption = this;
+
+                    // Show warning if it's the premium option
+                    const warningBadge = this.querySelector('.warning-badge');
+                    if (warningBadge) {
+                        warningBadge.style.display = 'block';
+                    }
+
+                    // Enable continue button
+                    continueBtn.disabled = false;
+                });
+            });
+
+            // Continue button click handler
+            continueBtn.addEventListener('click', function() {
+                if (!selectedOption) return;
+
+                const amount = selectedOption.getAttribute('data-amount');
+                
+                // Check if premium option selected (amount 2050)
+                if (amount === '2050') {
+                    showToast('This option is only available to existing members');
+                    return;
+                }
+
+                // Show loading state
+                btnText.textContent = 'Processing...';
+                spinner.style.display = 'inline-block';
+                continueBtn.disabled = true;
+
+                // Save selection to session storage
+                const loanLimit = selectedOption.getAttribute('data-limit');
+                sessionStorage.setItem('selectedAmount', 'Ksh ' + amount);
+                sessionStorage.setItem('loanLimit', 'Ksh ' + loanLimit);
+
+                // Simulate processing delay
+                setTimeout(() => {
+                    window.location.href = 'summary.html';
+                }, 2000);
+            });
+
+            // Function to show toast messages
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
