@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loan Selection | Pesa Pap</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     <style>
         /* ===== Base Styles ===== */
         * {
@@ -379,6 +385,11 @@
 
     <div id="toast" class="toast"></div>
 
+    <!-- Auth loader -->
+    <div id="authLoader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="width: 40px; height: 40px; border: 4px solid rgba(30, 136, 229, 0.2); border-top: 4px solid #1E88E5; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    </div>
+
     <footer class="footer">
         <div class="footer-links">
             <a href="/privacy">Privacy Policy</a>
@@ -389,12 +400,77 @@
     </footer>
 
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCcsKvgDm6s2o5PxfXKx0sUUWsS26FuBEo",
+            authDomain: "pesatap-d9b70.firebaseapp.com",
+            projectId: "pesatap-d9b70",
+            storageBucket: "pesatap-d9b70.appspot.com",
+            messagingSenderId: "1001156005267",
+            appId: "1:1001156005267:web:14d40283d28278c05e6c66",
+            measurementId: "G-QLTX923XC5"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
+
+        // Show toast message
+        function showToast(message, isError = true) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.backgroundColor = isError ? '#E53E3E' : '#10B981';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Check authentication state when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            const authLoader = document.getElementById('authLoader');
+            authLoader.style.display = 'flex';
+            
+            auth.onAuthStateChanged(async user => {
+                authLoader.style.display = 'none';
+                
+                if (!user) {
+                    // User not logged in, redirect to login
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                try {
+                    // Get user's first name from Firestore
+                    const mpesaNumber = sessionStorage.getItem('mpesaNumber');
+                    if (mpesaNumber) {
+                        const userDoc = await db.collection('user-data').doc(mpesaNumber).get();
+                        
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            if (userData && userData.name) {
+                                const firstName = userData.name.split(' ')[0];
+                                document.querySelector('.offer-card p').innerHTML = 
+                                    `Dear <strong>${firstName}</strong>, you qualify for a loan of up to <strong>Ksh 30,500</strong> based on your profile.`;
+                            }
+                        }
+                    }
+                    
+                    // Initialize the page functionality
+                    initPage();
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    showToast("Error loading user information");
+                }
+            });
+        });
+
+        // Initialize page functionality
+        function initPage() {
             const loanOptions = document.querySelectorAll('.loan-option');
             const continueBtn = document.getElementById('continueBtn');
             const btnText = continueBtn.querySelector('.btn-text');
             const spinner = continueBtn.querySelector('.spinner');
-            const toast = document.getElementById('toast');
             
             let selectedOption = null;
 
@@ -445,22 +521,18 @@
                 sessionStorage.setItem('selectedAmount', 'Ksh ' + amount);
                 sessionStorage.setItem('loanLimit', 'Ksh ' + loanLimit);
 
+                // Log event to analytics
+                analytics.logEvent('loan_option_selected', {
+                    amount: amount,
+                    loan_limit: loanLimit
+                });
+
                 // Simulate processing delay
                 setTimeout(() => {
                     window.location.href = 'summary.html';
                 }, 2000);
             });
-
-            // Function to show toast messages
-            function showToast(message) {
-                toast.textContent = message;
-                toast.classList.add('show');
-
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
-        });
+        }
     </script>
 </body>
 </html>

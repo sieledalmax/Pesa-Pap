@@ -9,6 +9,12 @@
     <title>Pesa Pap | Get Quick Funds Today</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     
     <!-- PWA Configuration -->
     <link rel="manifest" href="/manifest.json">
@@ -623,84 +629,128 @@
     <div id="loader" class="loader" style="display: none;"></div>
 
     <script>
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    console.log('ServiceWorker registration successful');
-                }).catch(err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCcsKvgDm6s2o5PxfXKx0sUUWsS26FuBEo",
+        authDomain: "pesatap-d9b70.firebaseapp.com",
+        projectId: "pesatap-d9b70",
+        storageBucket: "pesatap-d9b70.firebasestorage.app",
+        messagingSenderId: "1001156005267",
+        appId: "1:1001156005267:web:14d40283d28278c05e6c66",
+        measurementId: "G-QLTX923XC5"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const analytics = firebase.analytics();
+    const auth = firebase.auth();
+
+    // Check if user is logged in
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // User is signed in, redirect to dashboard
+            window.location.href = 'dashboard.html';
         }
+        // If not signed in, stay on this page
+    });
 
-        // Handle PWA install prompt
-        let deferredPrompt;
-        const installButton = document.getElementById('installButton');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Only show install button if not already installed
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                installButton.style.display = 'flex';
-                setTimeout(() => installButton.classList.add('show'), 300);
-            }
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            registerServiceWorker();
         });
+    }
 
-        installButton.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    installButton.style.display = 'none';
+    async function registerServiceWorker() {
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('ServiceWorker registration successful');
+
+            // Check if PWA is already installed
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                const installButton = document.getElementById('installButton');
+                
+                // Only show the button if not already installed
+                if (!window.matchMedia('(display-mode: standalone)').matches) {
+                    installButton.style.display = 'flex';
+                    setTimeout(() => installButton.classList.add('show'), 500);
+                    
+                    installButton.addEventListener('click', () => {
+                        e.prompt();
+                        installButton.style.display = 'none';
+                    });
+                    
+                    e.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted install prompt');
+                            analytics.logEvent('pwa_install_accepted');
+                        } else {
+                            console.log('User dismissed install prompt');
+                            analytics.logEvent('pwa_install_declined');
+                        }
+                    });
                 }
-                deferredPrompt = null;
-            }
-        });
-
-        window.addEventListener('appinstalled', () => {
-            installButton.style.display = 'none';
-        });
-
-        // Handle Get Started button click
-        document.getElementById('startBtn').addEventListener('click', () => {
-            const checkbox = document.getElementById('agreeCheckbox');
-            const loader = document.getElementById('loader');
-
-            if (!checkbox.checked) {
-                showToast('Please agree to the terms before continuing');
-                return;
-            }
-
-            loader.style.display = 'block';
-            document.getElementById('startBtn').disabled = true;
-
-            // Simulate processing delay before redirect
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 2000);
-        });
-
-        // Toast notification function
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = "toast";
-            toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.add("show");
-            }, 100);
-            
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
+            });
+        } catch (err) {
+            console.log('ServiceWorker registration failed: ', err);
         }
-    </script>
+    }
+
+    // Check if app is launched as PWA
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        const installButton = document.getElementById('installButton');
+        if (installButton) {
+            installButton.style.display = 'none';
+        }
+        analytics.logEvent('pwa_installed');
+    });
+
+    // Handle Get Started button click
+    document.getElementById('startBtn').addEventListener('click', () => {
+        const checkbox = document.getElementById('agreeCheckbox');
+        const loader = document.getElementById('loader');
+
+        if (!checkbox.checked) {
+            showToast('Please agree to the terms before continuing');
+            return;
+        }
+
+        loader.style.display = 'block';
+        document.getElementById('startBtn').disabled = true;
+
+        // Log the button click event
+        analytics.logEvent('get_started_clicked');
+
+        // Redirect to login page after short delay
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1500);
+    });
+
+    // Toast notification function
+    function showToast(message, isError = true) {
+        const toast = document.createElement('div');
+        toast.className = "toast";
+        toast.innerHTML = `<i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
+        toast.style.backgroundColor = isError ? 'var(--error)' : 'var(--success)';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add("show");
+        }, 100);
+        
+        setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+
+    // Track page view
+    analytics.logEvent('home_page_view');
+</script>
 </body>
 </html>

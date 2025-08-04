@@ -9,9 +9,11 @@
     <title>Register - Pesa Pap</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
 
     <style>
         /* ===== Base Styles ===== */
@@ -378,12 +380,12 @@
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter password" required />
+                <input type="password" id="password" name="password" placeholder="Enter password" required minlength="6" />
             </div>
 
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required />
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required minlength="6" />
             </div>
 
             <button type="submit" class="btn-register" id="registerBtn">NEXT</button>
@@ -415,76 +417,159 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDVJCpz7E6kKKxJHDJkcA5xCFVdfi2XoXs",
-            authDomain: "fedha-loans-straight-to-m-pesa.firebaseapp.com",
-            databaseURL: "https://fedha-loans-straight-to-m-pesa-default-rtdb.firebaseio.com",
-            projectId: "fedha-loans-straight-to-m-pesa",
-            storageBucket: "fedha-loans-straight-to-m-pesa.appspot.com",
-            messagingSenderId: "467457528567",
-            appId: "1:467457528567:web:ad9c6b8d592be989cdb9f2",
-            measurementId: "G-TGMNGTBD03"
+            apiKey: "AIzaSyCcsKvgDm6s2o5PxfXKx0sUUWsS26FuBEo",
+            authDomain: "pesatap-d9b70.firebaseapp.com",
+            projectId: "pesatap-d9b70",
+            storageBucket: "pesatap-d9b70.firebasestorage.app",
+            messagingSenderId: "1001156005267",
+            appId: "1:1001156005267:web:14d40283d28278c05e6c66",
+            measurementId: "G-QLTX923XC5"
         };
 
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const auth = firebase.auth();
+        const db = firebase.firestore();
         
         const loader = document.getElementById('loader');
         const toast = document.getElementById('toast');
         const registerBtn = document.getElementById('registerBtn');
         
-        function showToast(message) {
+        function showToast(message, isError = true) {
             toast.textContent = message;
+            toast.style.backgroundColor = isError ? '#EF4444' : '#10B981';
             toast.classList.add("show");
             setTimeout(() => toast.classList.remove("show"), 3000);
         }
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        // Format phone number to email format for Firebase Auth
+        function formatPhoneForAuth(phone) {
+            // Remove all non-digit characters
+            phone = phone.replace(/\D/g, '');
+            
+            // Handle all Kenyan phone number formats:
+            if (phone.startsWith('254')) {
+                phone = phone.substring(3); // Remove 254 prefix
+            } else if (phone.startsWith('0')) {
+                phone = phone.substring(1); // Remove leading 0
+            }
+            
+            // Ensure we have exactly 9 digits
+            if (phone.length !== 9) {
+                throw new Error("Invalid phone number length");
+            }
+            
+            // Return as email format
+            return `${phone}@pesapap.com`;
+        }
+
+        // Get clean 9-digit phone number for storage
+        function getCleanPhoneNumber(phone) {
+            // Remove all non-digit characters
+            phone = phone.replace(/\D/g, '');
+            
+            // Handle all Kenyan phone number formats:
+            if (phone.startsWith('254')) {
+                return phone.substring(3); // Remove 254 prefix
+            } else if (phone.startsWith('0')) {
+                return phone.substring(1); // Remove leading 0
+            }
+            
+            // If it's already 9 digits (7... or 1...)
+            return phone;
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const form = e.target;
-            const mpesa = document.getElementById('mpesa').value;
+            const mpesaInput = document.getElementById('mpesa');
+            const rawMpesa = mpesaInput.value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            if (password !== confirmPassword) {
-                showToast("Passwords do not match");
-                return;
-            }
+            try {
+                // Get clean 9-digit phone number
+                const cleanMpesa = getCleanPhoneNumber(rawMpesa);
+                
+                // Validate phone number format
+                if (!/^[0-9]{9}$/.test(cleanMpesa)) {
+                    showToast("Please enter a valid Kenyan phone number (7XXXXXXXX, 1XXXXXXXX, or 01XXXXXXXX)");
+                    return;
+                }
 
-            if (form.checkValidity()) {
-                loader.style.display = 'block';
-                registerBtn.disabled = true;
-                registerBtn.textContent = 'Processing...';
+                if (password !== confirmPassword) {
+                    showToast("Passwords do not match.");
+                    return;
+                }
 
-                const userData = {
-                    name: document.getElementById('name').value,
-                    county: document.getElementById('county').value,
-                    mpesa: mpesa,
-                    id: document.getElementById('id').value,
-                    gender: document.getElementById('gender').value,
-                    dob: document.getElementById('dob').value,
-                    marital: document.getElementById('marital').value,
-                    password: password,
-                    yere: "null"
-                };
+                if (password.length < 6) {
+                    showToast("Password must be at least 6 characters");
+                    return;
+                }
 
-                db.ref('users/' + mpesa).set(userData)
-                    .then(() => {
-                        // Save M-Pesa number and name in sessionStorage
-                        sessionStorage.setItem('mpesaNumber', mpesa);
-                        sessionStorage.setItem('accountName', userData.name);
-                        setTimeout(() => {
-                            window.location.href = 'eligibility.html';
-                        }, 2000);
-                    })
-                    .catch(err => {
-                        showToast("Error saving data: " + err.message);
-                        loader.style.display = 'none';
-                        registerBtn.disabled = false;
-                        registerBtn.textContent = 'NEXT';
-                    });
-            } else {
-                form.reportValidity();
+                if (form.checkValidity()) {
+                    loader.style.display = 'block';
+                    registerBtn.disabled = true;
+                    registerBtn.textContent = 'Processing...';
+
+                    // Create user with Firebase Auth
+                    const email = formatPhoneForAuth(cleanMpesa);
+                    
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+
+                    // Save additional user data to Firestore
+                    const userData = {
+                        name: document.getElementById('name').value,
+                        county: document.getElementById('county').value,
+                        mpesa: cleanMpesa, // Store just the 9-digit number
+                        id: document.getElementById('id').value,
+                        gender: document.getElementById('gender').value,
+                        dob: document.getElementById('dob').value,
+                        marital: document.getElementById('marital').value,
+                        yere: "null",
+                        uid: user.uid,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    // Save to Firestore in 'users' collection
+                    await db.collection('users').doc(cleanMpesa).set(userData);
+                    
+                    // Store user data in sessionStorage
+                    sessionStorage.setItem('mpesaNumber', cleanMpesa);
+                    sessionStorage.setItem('accountName', userData.name);
+                    sessionStorage.setItem('user', JSON.stringify({
+                        phone: cleanMpesa,
+                        uid: user.uid
+                    }));
+
+                    showToast("Registration successful!", false);
+                    
+                    // Redirect to eligibility page
+                    setTimeout(() => {
+                        window.location.href = 'eligibility.html';
+                    }, 2000);
+                } else {
+                    form.reportValidity();
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+
+                // Handle specific Firebase errors
+                if (error.code === 'auth/email-already-in-use') {
+                    showToast("This phone number is already registered");
+                } else if (error.code === 'auth/weak-password') {
+                    showToast("Password should be at least 6 characters");
+                } else if (error.code === 'auth/invalid-email') {
+                    showToast("Invalid phone number format");
+                } else {
+                    showToast(`Registration failed: ${error.message}`);
+                }
+            } finally {
+                loader.style.display = 'none';
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'NEXT';
             }
         });
     </script>
