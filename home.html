@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Loan Selection | Pesa Pap</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -13,313 +14,388 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
     <style>
-    /* ===== Base Styles ===== */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
-    }
+        :root {
+            --primary: #1E88E5;
+            --primary-dark: #0D47A1;
+            --secondary: #10B981;
+            --accent: #F59E0B;
+            --light: #F5F9FF;
+            --dark: #1e293b;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #E53E3E;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.2s ease;
+        }
 
-    body {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        background: linear-gradient(135deg, #F5F9FF 0%, #E3F2FD 100%);
-        color: #2d3748;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
 
-    .header {
-        text-align: center;
-        padding: 20px 0;
-        background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
-        color: white;
-        border-radius: 0 0 20px 20px;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 20px rgba(30, 136, 229, 0.3);
-    }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #F5F9FF 0%, #E3F2FD 100%);
+            color: var(--dark);
+            line-height: 1.5;
+        }
 
-    .brand-logo {
-        font-size: 2rem;
-        font-weight: 700;
-        color: white;
-        margin-bottom: 0.5rem;
-    }
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 0.6rem 0;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
 
-    .brand-tagline {
-        font-weight: 300;
-        opacity: 0.9;
-        font-size: 0.9rem;
-    }
+        .header {
+            text-align: center;
+            padding: 1.2rem 1rem 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 4px 20px rgba(30, 136, 229, 0.3);
+        }
 
-    .selection-container {
-        max-width: 800px;
-        margin: 0 auto 3rem;
-        padding: 2rem;
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(30, 136, 229, 0.1);
-        border: 1px solid rgba(30, 136, 229, 0.2);
-        position: relative;
-    }
+        .brand-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
 
-    .selection-container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        background: rgba(30, 136, 229, 0.05);
-        border-radius: 50%;
-        transform: translate(30%, -30%);
-    }
+        .brand-logo i {
+            color: var(--accent);
+        }
 
-    .page-title {
-        color: #0D47A1;
-        font-size: 1.8rem;
-        text-align: center;
-        margin-bottom: 0.5rem;
-        font-weight: 700;
-    }
+        .brand-tagline {
+            font-weight: 300;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
 
-    .page-subtitle {
-        text-align: center;
-        color: #4a5568;
-        margin-bottom: 2rem;
-        font-size: 1rem;
-    }
-
-    .offer-card {
-        background: #E3F2FD;
-        border-left: 4px solid #1E88E5;
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-        position: relative;
-    }
-
-    .offer-card p {
-        font-size: 1.1rem;
-        color: #0D47A1;
-        font-weight: 500;
-    }
-
-    .offer-card strong {
-        font-weight: 700;
-        color: #0D47A1;
-    }
-
-    .loan-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 1rem;
-        margin: 2rem 0;
-    }
-
-    .loan-option {
-        padding: 1.5rem 1rem;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        background: white;
-    }
-
-    .loan-option:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(30, 136, 229, 0.1);
-        border-color: #1E88E5;
-    }
-
-    .loan-option.active {
-        border-color: #1E88E5;
-        background: #F5F9FF;
-        position: relative;
-    }
-
-    .loan-option.active::after {
-        content: "✓";
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        width: 24px;
-        height: 24px;
-        background: #1E88E5;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-    }
-
-    .loan-amount {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: #1E88E5;
-        margin-bottom: 0.5rem;
-    }
-
-    .loan-limit {
-        font-size: 0.9rem;
-        color: #4a5568;
-    }
-
-    .warning-badge {
-        display: none;
-        background: #FFF5F5;
-        color: #E53E3E;
-        padding: 0.5rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        margin-top: 0.5rem;
-    }
-
-    .info-box {
-        background: #FFF9E6;
-        border-left: 4px solid #F6AD55;
-        padding: 1.2rem;
-        border-radius: 12px;
-        margin: 1.5rem 0;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .info-icon {
-        color: #DD6B20;
-        font-size: 1.3rem;
-        margin-top: 0.2rem;
-    }
-
-    .info-text {
-        font-size: 0.95rem;
-        color: #4A5568;
-    }
-
-    .action-section {
-        text-align: center;
-        margin-top: 2rem;
-    }
-
-    .continue-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem 3rem;
-        background: linear-gradient(135deg, #1E88E5 0%, #0D47A1 100%);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(30, 136, 229, 0.4);
-    }
-
-    .continue-btn:hover:not(:disabled) {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(30, 136, 229, 0.5);
-    }
-
-    .continue-btn:disabled {
-        background: #CBD5E0;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-        opacity: 0.7;
-    }
-
-    .spinner {
-        display: none;
-        margin-left: 10px;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    .footer {
-        background: #0D47A1;
-        color: white;
-        text-align: center;
-        padding: 20px;
-        margin-top: auto;
-        font-size: 0.9rem;
-    }
-
-    .footer-links {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-bottom: 10px;
-    }
-
-    .footer-links a {
-        color: rgba(255,255,255,0.8);
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-
-    .footer-links a:hover {
-        color: white;
-    }
-
-    .toast {
-        visibility: hidden;
-        min-width: 250px;
-        background-color: #0D47A1;
-        color: white;
-        text-align: center;
-        border-radius: 8px;
-        padding: 16px;
-        position: fixed;
-        z-index: 1000;
-        left: 50%;
-        bottom: 30px;
-        transform: translateX(-50%);
-        font-size: 1rem;
-        opacity: 0;
-        transition: opacity 0.3s, visibility 0.3s;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .toast.show {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    @media (max-width: 768px) {
         .selection-container {
-            margin: 1.5rem;
-            padding: 1.8rem;
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 1rem;
+            padding: 1.2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
         }
-        
+
         .page-title {
-            font-size: 1.5rem;
+            color: var(--primary-dark);
+            font-size: 1.4rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
         }
-        
+
+        .page-subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        .offer-card {
+            background: rgba(227, 242, 253, 0.8);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.2rem;
+        }
+
+        .offer-card p {
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .offer-card strong {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
         .loan-grid {
+            display: grid;
             grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin: 1.2rem 0;
         }
-        
+
+        .loan-option {
+            padding: 1rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loan-option:hover {
+            border-color: var(--primary);
+            box-shadow: var(--box-shadow);
+        }
+
+        .loan-option.active {
+            border-color: var(--primary);
+            background: rgba(227, 242, 253, 0.5);
+        }
+
+        .loan-option.active::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .loan-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .loan-limit {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .warning-badge {
+            display: none;
+            background: rgba(255, 245, 245, 0.8);
+            color: var(--danger);
+            padding: 0.3rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .info-box {
+            background: rgba(255, 249, 230, 0.8);
+            border-left: 3px solid var(--warning);
+            padding: 0.8rem;
+            border-radius: var(--border-radius);
+            margin: 1.2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .info-icon {
+            color: var(--warning);
+            font-size: 1rem;
+            margin-top: 0.1rem;
+        }
+
+        .info-text {
+            font-size: 0.85rem;
+            color: #4A5568;
+        }
+
+        .action-section {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .continue-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .continue-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 136, 229, 0.4);
+        }
+
+        .continue-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .spinner {
+            display: none;
+            margin-left: 8px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+            font-size: 0.8rem;
+        }
+
         .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
             flex-wrap: wrap;
         }
-    }
-</style>
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: var(--primary-dark);
+            color: white;
+            text-align: center;
+            border-radius: var(--border-radius);
+            padding: 0.8rem;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Auth loader */
+        .auth-loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(30, 136, 229, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @media (min-width: 768px) {
+            .header {
+                padding: 1.5rem 0;
+                margin-bottom: 1.5rem;
+            }
+            
+            .brand-logo {
+                font-size: 2rem;
+            }
+            
+            .selection-container {
+                padding: 2rem;
+                margin-bottom: 2rem;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .loan-grid {
+                gap: 1rem;
+            }
+            
+            .loan-option {
+                padding: 1.2rem 0.8rem;
+            }
+            
+            .loan-amount {
+                font-size: 1.2rem;
+            }
+            
+            .continue-btn {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <div class="header-banner">
+        Fast & Reliable Financing Solutions • 100% Online Application
+    </div>
+
     <div class="header">
-        <div class="brand-logo">Pesa Pap</div>
-        <div class="brand-tagline">Fast & Reliable Financing Solutions</div>
+        <div class="brand-logo">
+            <span>Pesa Pap</span>
+        </div>
+        <div class="brand-tagline">Your trusted financial partner</div>
     </div>
 
     <div class="selection-container">
@@ -327,7 +403,7 @@
         <p class="page-subtitle">Choose your preferred savings amount to determine your loan limit</p>
 
         <div class="offer-card">
-            <p>Dear customer, you qualify for a loan of up to <strong>Ksh 30,500</strong> based on your profile.</p>
+            <p id="welcomeMessage">Dear customer, you qualify for a loan of up to <strong>Ksh 30,500</strong> based on your profile.</p>
         </div>
 
         <div class="loan-grid">
@@ -371,14 +447,14 @@
         </div>
 
         <div class="info-box">
-            <div class="info-icon">ℹ️</div>
+            <div class="info-icon"><i class="fas fa-info-circle"></i></div>
             <div class="info-text">Higher savings amounts qualify you for larger loans. Your selected savings amount will be automatically deducted from your loan disbursement.</div>
         </div>
 
         <div class="action-section">
             <button class="continue-btn" id="continueBtn" disabled>
                 <span class="btn-text">Continue Application</span>
-                <span class="spinner">⏳</span>
+                <span class="spinner"><i class="fas fa-spinner"></i></span>
             </button>
         </div>
     </div>
@@ -386,8 +462,8 @@
     <div id="toast" class="toast"></div>
 
     <!-- Auth loader -->
-    <div id="authLoader" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="width: 40px; height: 40px; border: 4px solid rgba(30, 136, 229, 0.2); border-top: 4px solid #1E88E5; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <div id="authLoader" class="auth-loader">
+        <div class="auth-spinner"></div>
     </div>
 
     <footer class="footer">
@@ -420,8 +496,8 @@
         // Show toast message
         function showToast(message, isError = true) {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.backgroundColor = isError ? '#E53E3E' : '#10B981';
+            toast.innerHTML = `<i class="fas fa-${isError ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
+            toast.style.backgroundColor = isError ? 'var(--danger)' : 'var(--success)';
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
@@ -450,7 +526,7 @@
                             const userData = userDoc.data();
                             if (userData && userData.name) {
                                 const firstName = userData.name.split(' ')[0];
-                                document.querySelector('.offer-card p').innerHTML = 
+                                document.getElementById('welcomeMessage').innerHTML = 
                                     `Dear <strong>${firstName}</strong>, you qualify for a loan of up to <strong>Ksh 30,500</strong> based on your profile.`;
                             }
                         }
@@ -530,8 +606,21 @@
                 // Simulate processing delay
                 setTimeout(() => {
                     window.location.href = 'summary.html';
-                }, 2000);
+                }, 1500);
             });
+
+            // Register Service Worker for PWA
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(registration => {
+                            console.log('ServiceWorker registration successful');
+                        })
+                        .catch(err => {
+                            console.log('ServiceWorker registration failed: ', err);
+                        });
+                });
+            }
         }
     </script>
 </body>
